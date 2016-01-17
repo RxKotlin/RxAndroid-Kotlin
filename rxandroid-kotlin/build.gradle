@@ -1,5 +1,49 @@
+buildscript {
+    ext.kotlin_version = '1.0.0-beta-3595'
+    repositories {
+        jcenter()
+        mavenCentral()
+    }
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.4'
+    }
+}
+
+apply plugin: 'com.jfrog.bintray'
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
+apply plugin: 'maven'
+apply plugin: 'maven-publish'
+
+bintray {
+    user = ''
+    key = ''
+    publications = ['Jcenter']
+    pkg {
+        repo = 'Maven'
+        name = 'RxAndroid-Kotlin'
+        userOrg = 'rxkotlin'
+        licenses = ['MIT']
+        vcsUrl = 'https://github.com/RxKotlin/RxAndroid-Kotlin.git'
+        version {
+            name = '0.0.1'
+            desc = 'This is RxAndroid-Kotlin.'
+            released  = new Date()
+        }
+    }
+}
+
+publishing {
+    publications {
+        Jcenter(MavenPublication) {
+            groupId 'com.github.rxkotlin'
+            artifactId 'rxandroid-kotlin'
+            version '0.0.1'
+            artifact("$buildDir/outputs/aar/rxandroid-kotlin-debug.aar")
+        }
+    }
+}
 
 android {
     compileSdkVersion 22
@@ -18,7 +62,7 @@ android {
         }
     }
     sourceSets {
-        main.java.srcDirs += 'src/main/kotlin'
+        main.java.srcDirs += 'src/main/java'
     }
 }
 
@@ -29,30 +73,3 @@ dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     compile 'io.reactivex:rxkotlin:0.30.1'
 }
-
-buildscript {
-    ext.kotlin_version = '1.0.0-beta-3595'
-    repositories {
-        mavenCentral()
-    }
-    dependencies {
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-    }
-}
-
-repositories {
-    mavenCentral()
-}
-
-ext {
-    PUBLISH_GROUP_ID = 'com.github.rxkotlin'
-    PUBLISH_VERSION = '0.0.1'
-    PUBLISH_DES = 'This is the first version.'
-    LIB_NAME = 'rxandroid-kotlin'
-
-    WEBSITE_URL = 'https://github.com/RxKotlin/RxAndroid-Kotlin'
-    ISSUE_TRACKER_URL = 'https://github.com/RxKotlin/RxAndroid-Kotlin/issues'
-    VSC_URL = 'https://github.com/RxKotlin/RxAndroid-Kotlin.git'
-}
-
-apply from: 'https://raw.githubusercontent.com/andforce/release-android-lib-to-jcenter/master/bintray.gradle'
